@@ -1,0 +1,6 @@
+{
+  "name": "Heritage Lodge, Habuharo",
+  "description": "Official website for Heritage Lodge, Habuharo – a premier eco-lodge sanctuary on Habuharo Island, Lake Bunyonyi, Uganda. Lakeside cottages, island boat transfers, dining, and nature retreats.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
