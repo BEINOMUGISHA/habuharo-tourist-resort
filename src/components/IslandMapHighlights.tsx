@@ -207,11 +207,11 @@ export const IslandMapHighlights: React.FC = () => {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={() => setActiveFilter('all')}
             id="island-filter-all"
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all min-h-[38px] flex items-center ${
               activeFilter === 'all'
                 ? 'bg-amber-500 text-stone-950 font-semibold shadow-md'
                 : 'bg-stone-900 text-stone-400 hover:text-white hover:bg-stone-800 border border-stone-800'
@@ -222,49 +222,49 @@ export const IslandMapHighlights: React.FC = () => {
           <button
             onClick={() => setActiveFilter('jetty')}
             id="island-filter-jetty"
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all min-h-[38px] flex items-center gap-1.5 ${
               activeFilter === 'jetty'
                 ? 'bg-sky-500 text-white font-semibold shadow-md'
                 : 'bg-stone-900 text-stone-400 hover:text-white hover:bg-stone-800 border border-stone-800'
             }`}
           >
-            <Anchor className="w-3 h-3" />
+            <Anchor className="w-3.5 h-3.5" />
             <span>Jetties</span>
           </button>
           <button
             onClick={() => setActiveFilter('lodge')}
             id="island-filter-lodge"
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all min-h-[38px] flex items-center gap-1.5 ${
               activeFilter === 'lodge'
                 ? 'bg-amber-500 text-stone-950 font-semibold shadow-md'
                 : 'bg-stone-900 text-stone-400 hover:text-white hover:bg-stone-800 border border-stone-800'
             }`}
           >
-            <Coffee className="w-3 h-3" />
+            <Coffee className="w-3.5 h-3.5" />
             <span>Lodge & Dining</span>
           </button>
           <button
             onClick={() => setActiveFilter('viewpoint')}
             id="island-filter-viewpoint"
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all min-h-[38px] flex items-center gap-1.5 ${
               activeFilter === 'viewpoint'
                 ? 'bg-teal-500 text-white font-semibold shadow-md'
                 : 'bg-stone-900 text-stone-400 hover:text-white hover:bg-stone-800 border border-stone-800'
             }`}
           >
-            <Eye className="w-3 h-3" />
+            <Eye className="w-3.5 h-3.5" />
             <span>Lookout</span>
           </button>
           <button
             onClick={() => setActiveFilter('activity')}
             id="island-filter-activity"
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1 ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-medium transition-all min-h-[38px] flex items-center gap-1.5 ${
               activeFilter === 'activity'
                 ? 'bg-indigo-500 text-white font-semibold shadow-md'
                 : 'bg-stone-900 text-stone-400 hover:text-white hover:bg-stone-800 border border-stone-800'
             }`}
           >
-            <Waves className="w-3 h-3" />
+            <Waves className="w-3.5 h-3.5" />
             <span>Water & Trails</span>
           </button>
         </div>
@@ -469,6 +469,15 @@ export const IslandMapHighlights: React.FC = () => {
                     onMouseLeave={() => setHoveredSpotId(null)}
                     id={`svg-pin-${spot.id}`}
                   >
+                    {/* Invisible expanded touch hit-target for mobile fingers */}
+                    <circle
+                      cx={px}
+                      cy={py}
+                      r="32"
+                      fill="transparent"
+                      className="cursor-pointer"
+                    />
+
                     {/* Animated Pulsing Rings for Active/Hovered Pin */}
                     {(isSelected || isHovered) && (
                       <>
@@ -642,7 +651,7 @@ export const IslandMapHighlights: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-400 block mb-2.5">
               Select Another Island Spot:
             </span>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {ISLAND_SPOTS.map((spot) => {
                 const isCurrent = spot.id === selectedSpotId;
                 return (
@@ -650,14 +659,14 @@ export const IslandMapHighlights: React.FC = () => {
                     key={spot.id}
                     onClick={() => setSelectedSpotId(spot.id)}
                     id={`spot-switch-${spot.id}`}
-                    className={`p-2.5 rounded-xl text-left text-xs transition-all flex items-start gap-2 ${
+                    className={`p-2.5 rounded-xl text-left text-xs transition-all flex items-center gap-2.5 min-h-[44px] ${
                       isCurrent
                         ? 'bg-amber-500/20 border border-amber-500/50 text-amber-300 font-medium'
                         : 'bg-stone-950/70 hover:bg-stone-800 border border-stone-800/80 text-stone-300'
                     }`}
                   >
-                    <div className="mt-0.5 text-amber-400 shrink-0">
-                      {renderIcon(spot.icon, 'w-3.5 h-3.5')}
+                    <div className="text-amber-400 shrink-0">
+                      {renderIcon(spot.icon, 'w-4 h-4')}
                     </div>
                     <span className="line-clamp-2 leading-tight">
                       {spot.name}

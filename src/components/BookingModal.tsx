@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, Calendar, Users, Home, Ship, MessageSquare, Phone, CheckCircle2, Sparkles, AlertCircle } from 'lucide-react';
 import { COTTAGES, LODGE_INFO } from '../data/lodgeData';
 import { BookingState } from '../types';
@@ -16,8 +16,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   defaultCottageId,
   initialData,
 }) => {
-  if (!isOpen) return null;
-
   const [formData, setFormData] = useState<BookingState>({
     checkIn: initialData?.checkIn || '',
     checkOut: initialData?.checkOut || '',
@@ -32,9 +30,45 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const [submitted, setSubmitted] = useState(false);
 
+  // Sync state if props change
+  useEffect(() => {
+    if (defaultCottageId) {
+      setFormData((prev) => ({ ...prev, cottageId: defaultCottageId }));
+    }
+    if (initialData?.checkIn) {
+      setFormData((prev) => ({ ...prev, checkIn: initialData.checkIn || '' }));
+    }
+    if (initialData?.checkOut) {
+      setFormData((prev) => ({ ...prev, checkOut: initialData.checkOut || '' }));
+    }
+    if (initialData?.guests) {
+      setFormData((prev) => ({ ...prev, guests: initialData.guests || 2 }));
+    }
+  }, [defaultCottageId, initialData, isOpen]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
+  // Escape key handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const selectedCottage = COTTAGES.find((c) => c.id === formData.cottageId) || COTTAGES[0];
 
-  const handleWhatsAppInquiry = () => {
+  const whatsAppUrl = useMemo(() => {
     const text = `Hello Heritage Lodge, Habuharo!
 I would like to inquire about a booking reservation:
 • Cottage: ${selectedCottage.name} ($${selectedCottage.priceUSD} / ${selectedCottage.priceUGX.toLocaleString()} UGX per night)
@@ -48,24 +82,31 @@ ${formData.specialRequests ? `• Special Requests: ${formData.specialRequests}`
 
 Please confirm availability and payment details. Thank you!`;
 
-    const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/256703606114?text=${encodedText}`, '_blank');
-  };
+    return `https://wa.me/256703606114?text=${encodeURIComponent(text)}`;
+  }, [selectedCottage, formData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-950/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-8 text-stone-900 border border-stone-200">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto touch-scroll bg-stone-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-6 text-stone-900 border border-stone-200">
         {/* Modal Header */}
-        <div className="bg-stone-900 text-white p-6 relative">
+        <div className="bg-stone-900 text-white p-5 sm:p-6 relative">
           <button
             onClick={onClose}
             id="close-booking-modal-btn"
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white flex items-center justify-center transition-colors"
+            className="absolute top-3.5 right-3.5 min-w-[44px] min-h-[44px] rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
+            aria-label="Close reservation dialog"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,7 +124,7 @@ Please confirm availability and payment details. Thank you!`;
 
         {submitted ? (
           /* Confirmation State */
-          <div className="p-8 text-center space-y-6">
+          <div className="p-6 sm:p-8 text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
               <CheckCircle2 className="w-10 h-10" />
             </div>
@@ -121,19 +162,21 @@ Please confirm availability and payment details. Thank you!`;
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-              <button
-                onClick={handleWhatsAppInquiry}
+              <a
+                href={whatsAppUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 id="modal-confirm-whatsapp-btn"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto min-h-[44px] px-6 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Open in WhatsApp (+256 703 606114)</span>
-              </button>
+              </a>
 
               <a
                 href={`tel:${LODGE_INFO.phone}`}
                 id="modal-confirm-call-btn"
-                className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto min-h-[44px] px-5 py-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2"
               >
                 <Phone className="w-4 h-4 text-emerald-400" />
                 <span>Direct Call</span>
@@ -146,14 +189,14 @@ Please confirm availability and payment details. Thank you!`;
                 onClose();
               }}
               id="modal-done-btn"
-              className="text-xs text-stone-500 hover:text-stone-800 underline block mx-auto pt-2"
+              className="text-xs text-stone-500 hover:text-stone-800 underline block mx-auto pt-2 min-h-[44px] py-2"
             >
               Close this window
             </button>
           </div>
         ) : (
           /* Form Content */
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-5">
             {/* Cottage Selector */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
@@ -166,9 +209,9 @@ Please confirm availability and payment details. Thank you!`;
                     key={c.id}
                     onClick={() => setFormData({ ...formData, cottageId: c.id })}
                     id={`select-cottage-opt-${c.id}`}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`p-3 rounded-xl border text-left transition-all min-h-[56px] ${
                       formData.cottageId === c.id
-                        ? 'border-amber-600 bg-amber-50/70 shadow-xs'
+                        ? 'border-amber-600 bg-amber-50/70 shadow-xs ring-1 ring-amber-500'
                         : 'border-stone-200 hover:border-stone-300 bg-white'
                     }`}
                   >
@@ -193,13 +236,13 @@ Please confirm availability and payment details. Thank you!`;
                   Check-in Date
                 </label>
                 <div className="relative">
-                  <Calendar className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Calendar className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="date"
                     value={formData.checkIn}
                     onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
                     id="booking-checkin-input"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-xs text-stone-800 focus:outline-none focus:border-amber-600"
+                    className="w-full min-h-[44px] pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 focus:outline-none focus:border-amber-600 bg-white"
                   />
                 </div>
               </div>
@@ -209,13 +252,13 @@ Please confirm availability and payment details. Thank you!`;
                   Check-out Date
                 </label>
                 <div className="relative">
-                  <Calendar className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Calendar className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="date"
                     value={formData.checkOut}
                     onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                     id="booking-checkout-input"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-xs text-stone-800 focus:outline-none focus:border-amber-600"
+                    className="w-full min-h-[44px] pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 focus:outline-none focus:border-amber-600 bg-white"
                   />
                 </div>
               </div>
@@ -228,12 +271,12 @@ Please confirm availability and payment details. Thank you!`;
                   Number of Guests
                 </label>
                 <div className="relative">
-                  <Users className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Users className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <select
                     value={formData.guests}
                     onChange={(e) => setFormData({ ...formData, guests: Number(e.target.value) })}
                     id="booking-guests-select"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-xs text-stone-800 focus:outline-none focus:border-amber-600 bg-white"
+                    className="w-full min-h-[44px] pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 focus:outline-none focus:border-amber-600 bg-white"
                   >
                     <option value={1}>1 Guest</option>
                     <option value={2}>2 Guests</option>
@@ -244,17 +287,17 @@ Please confirm availability and payment details. Thank you!`;
                 </div>
               </div>
 
-              <div className="flex items-center pt-5">
-                <label className="flex items-center gap-2.5 cursor-pointer text-xs text-stone-700 select-none">
+              <div className="flex items-center pt-2 sm:pt-5">
+                <label className="flex items-center gap-2.5 cursor-pointer text-xs text-stone-700 select-none min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={formData.boatTransferNeeded}
                     onChange={(e) => setFormData({ ...formData, boatTransferNeeded: e.target.checked })}
                     id="booking-boat-transfer-checkbox"
-                    className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500"
+                    className="w-5 h-5 rounded text-amber-600 focus:ring-amber-500"
                   />
-                  <span className="flex items-center gap-1 font-medium">
-                    <Ship className="w-3.5 h-3.5 text-sky-700" />
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <Ship className="w-4 h-4 text-sky-700" />
                     <span>Include Mainland Boat Pickup</span>
                   </span>
                 </label>
@@ -274,7 +317,7 @@ Please confirm availability and payment details. Thank you!`;
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   id="booking-name-input"
                   required
-                  className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600 bg-white"
                 />
               </div>
 
@@ -289,7 +332,7 @@ Please confirm availability and payment details. Thank you!`;
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   id="booking-phone-input"
                   required
-                  className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600"
+                  className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600 bg-white"
                 />
               </div>
             </div>
@@ -305,26 +348,27 @@ Please confirm availability and payment details. Thank you!`;
                 value={formData.specialRequests}
                 onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
                 id="booking-notes-textarea"
-                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600"
+                className="w-full p-3 rounded-xl border border-stone-300 text-base sm:text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-600 bg-white"
               />
             </div>
 
             {/* Action Buttons */}
             <div className="pt-3 border-t border-stone-200 flex flex-col sm:flex-row items-center gap-3">
-              <button
-                type="button"
-                onClick={handleWhatsAppInquiry}
+              <a
+                href={whatsAppUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 id="booking-send-whatsapp-direct-btn"
-                className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                className="w-full sm:flex-1 min-h-[44px] py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2 text-center"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Instant Inquiry via WhatsApp</span>
-              </button>
+              </a>
 
               <button
                 type="submit"
                 id="booking-submit-btn"
-                className="w-full sm:w-auto py-3.5 px-6 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-md transition-all"
+                className="w-full sm:w-auto min-h-[44px] py-3 px-6 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-md transition-all"
               >
                 Submit Request
               </button>
