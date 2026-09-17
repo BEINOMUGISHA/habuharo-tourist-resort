@@ -30,12 +30,12 @@ export const CottagesSection: React.FC<CottagesSectionProps> = ({ onOpenBooking 
           </div>
 
           {/* Currency Toggle */}
-          <div className="flex items-center gap-2 bg-stone-200/80 p-1.5 rounded-xl self-start md:self-auto shrink-0 border border-stone-300">
+          <div className="flex items-center gap-1.5 bg-stone-200/80 p-1.5 rounded-xl self-start md:self-auto shrink-0 border border-stone-300">
             <span className="text-xs font-medium text-stone-600 px-2">Currency:</span>
             <button
               onClick={() => setCurrency('USD')}
               id="currency-usd-btn"
-              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+              className={`min-h-[38px] px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 currency === 'USD'
                   ? 'bg-stone-900 text-white shadow-sm'
                   : 'text-stone-700 hover:text-stone-900'
@@ -46,7 +46,7 @@ export const CottagesSection: React.FC<CottagesSectionProps> = ({ onOpenBooking 
             <button
               onClick={() => setCurrency('UGX')}
               id="currency-ugx-btn"
-              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+              className={`min-h-[38px] px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 currency === 'UGX'
                   ? 'bg-stone-900 text-white shadow-sm'
                   : 'text-stone-700 hover:text-stone-900'
@@ -136,7 +136,7 @@ export const CottagesSection: React.FC<CottagesSectionProps> = ({ onOpenBooking 
                   <button
                     onClick={() => onOpenBooking(cottage.id)}
                     id={`book-btn-${cottage.id}`}
-                    className="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-sm hover:shadow transition-all flex items-center justify-center gap-1.5"
+                    className="w-full sm:flex-1 min-h-[44px] py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-sm hover:shadow transition-all flex items-center justify-center gap-1.5"
                   >
                     <span>Book Reservation</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -145,7 +145,7 @@ export const CottagesSection: React.FC<CottagesSectionProps> = ({ onOpenBooking 
                   <button
                     onClick={() => setSelectedCottageForModal(cottage)}
                     id={`details-btn-${cottage.id}`}
-                    className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold transition-colors border border-stone-300 flex items-center justify-center gap-1.5"
+                    className="w-full sm:w-auto min-h-[44px] py-2.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold transition-colors border border-stone-300 flex items-center justify-center gap-1.5"
                   >
                     <Eye className="w-3.5 h-3.5 text-stone-600" />
                     <span>View Photos</span>
@@ -156,7 +156,7 @@ export const CottagesSection: React.FC<CottagesSectionProps> = ({ onOpenBooking 
                     target="_blank"
                     rel="noopener noreferrer"
                     id={`whatsapp-cottage-${cottage.id}`}
-                    className="w-full sm:w-auto p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-colors border border-emerald-200 flex items-center justify-center"
+                    className="w-full sm:w-auto min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-colors border border-emerald-200 flex items-center justify-center"
                     title="Inquire via WhatsApp"
                     aria-label={`Inquire about ${cottage.name} via WhatsApp`}
                   >

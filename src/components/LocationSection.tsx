@@ -47,13 +47,13 @@ export const LocationSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-stone-800">
+              <div className="flex flex-wrap gap-2.5 pt-2 border-t border-stone-800">
                 <a
                   href={LODGE_INFO.googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   id="open-google-maps-btn"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-colors shadow-sm"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-colors shadow-sm"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Open in Google Maps</span>
@@ -65,7 +65,7 @@ export const LocationSection: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   id="boat-transfer-whatsapp-btn"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700/80 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors border border-emerald-500/30"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700/80 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors border border-emerald-500/30"
                 >
                   <Ship className="w-3.5 h-3.5" />
                   <span>Schedule Boat Pickup</span>
@@ -158,11 +158,11 @@ export const LocationSection: React.FC = () => {
                 Call or WhatsApp our manager prior to reaching Kabale so our boat captain is primed at the landing dock ready for your arrival.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-2.5">
                 <a
                   href={`tel:${LODGE_INFO.phone}`}
                   id="location-call-captain-btn"
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-stone-700"
+                  className="flex-1 min-h-[44px] py-3 px-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-stone-700"
                 >
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Call {LODGE_INFO.phone}</span>
@@ -172,7 +172,7 @@ export const LocationSection: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   id="location-whatsapp-captain-btn"
-                  className="flex-1 py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                  className="flex-1 min-h-[44px] py-3 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>WhatsApp Pickup</span>
